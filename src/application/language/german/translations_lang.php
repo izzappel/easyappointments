@@ -1,9 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 // German
-$lang['page_title'] = 'Vereinbaren Sie einen Termin mit';
-$lang['step_one_title'] = 'Auswahl der Dienstleistung und des Anbieters';
-$lang['select_service'] = 'Auswahl der Dienstleistung';
-$lang['select_provider'] = 'Auswahl des Anbieters';
+$lang['page_title'] = 'Buchen';
+$lang['step_one_title'] = 'Auswahl der Dienstleistung und des Therapeuten';
+$lang['select_service'] = 'Dienstleistung';
+$lang['select_provider'] = 'Therapeut';
 $lang['duration'] = 'Dauer';
 $lang['minutes'] = 'Minuten';
 $lang['price'] = 'Preis';
@@ -267,7 +267,7 @@ $lang['ea_update_success'] = 'Easy!Appointments wurde erfolgreich aktualisiert!'
 $lang['require_captcha'] = 'Erfordern CAPTCHA';
 $lang['require_captcha_hint'] = 'Wenn Aktiv, werden die Kunden eine zufällig generierte Zeichenfolge (CAPTCHA) eintippen vor die eine Termin buchen/speichern dürfen.';
 $lang['captcha_is_wrong'] = 'CAPTCHA Überprüfung fehlgeschlagen, bitte versuchen Sie es wieder.';
-$lang['any_provider'] = 'Jeder Anbieter';
+$lang['any_provider'] = 'Beliebiger Therapeut';
 $lang['requested_hour_is_unavailable'] = 'Der gewünschte Termin ist leider nicht verfügbar. Bitte wählen Sie eine andere Zeit für den Termin.';
 $lang['customer_notifications'] = 'Kunden Benachrichtigungen';
 $lang['customer_notifications_hint'] = 'Stellen Sie ein, ob die Kunden eine E-Mail-Benachrichtigungen erhalten, jedes mal es gibt ein neue änderung auf ein Termin.';

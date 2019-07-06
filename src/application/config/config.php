@@ -95,28 +95,28 @@ $config['language'] = defined('Config::LANGUAGE') ? Config::LANGUAGE : 'english'
 |
 */
 $config['available_languages'] = [
-    'arabic',
-    'bulgarian',
-    'chinese',
-    'danish',
-    'dutch',
+    // 'arabic',
+    // 'bulgarian',
+    // 'chinese',
+    // 'danish',
+    // 'dutch',
     'english',
-    'finnish',
-    'french',
+    // 'finnish',
+    // 'french',
     'german',
-    'greek',
-    'hindi',
-    'hungarian',
-    'italian',
-    'japanese',
-    'luxembourgish',
-    'polish',
-    'portuguese',
-    'romanian',
-    'russian',
-    'slovak',
-    'spanish',
-    'turkish'
+    // 'greek',
+    // 'hindi',
+    // 'hungarian',
+    // 'italian',
+    // 'japanese',
+    // 'luxembourgish',
+    // 'polish',
+    // 'portuguese',
+    // 'romanian',
+    // 'russian',
+    // 'slovak',
+    // 'spanish',
+    // 'turkish'
 ];
 
 /*

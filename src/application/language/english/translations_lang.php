@@ -1,9 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 // English
-$lang['page_title'] = 'Book Appointment With';
-$lang['step_one_title'] = 'Select Service & Provider';
-$lang['select_service'] = 'Select Service';
-$lang['select_provider'] = 'Select Provider';
+$lang['page_title'] = 'Booking';
+$lang['step_one_title'] = 'Select Service & Therapist';
+$lang['select_service'] = 'Service';
+$lang['select_provider'] = 'Therapist';
 $lang['duration'] = 'Duration';
 $lang['minutes'] = 'Minutes';
 $lang['price'] = 'Price';
@@ -267,7 +267,7 @@ $lang['ea_update_success'] = 'Easy!Appointments has been successfully updated!';
 $lang['require_captcha'] = 'Require CAPTCHA';
 $lang['require_captcha_hint'] = 'When enabled, the customers will have to type a random generated CAPTCHA string before booking/updating an appointment.';
 $lang['captcha_is_wrong'] = 'CAPTCHA verification failed, please try again.';
-$lang['any_provider'] = 'Any Provider';
+$lang['any_provider'] = 'Any Therapist';
 $lang['requested_hour_is_unavailable'] = 'The requested appointment is unfortunately not available. Please select a different hour for your appointment.';
 $lang['customer_notifications'] = 'Customer Notifications';
 $lang['customer_notifications_hint'] = 'Defines whether the customer will receive email notifications whenever there is a schedule change on one of his appointments.';
