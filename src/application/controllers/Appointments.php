@@ -799,12 +799,17 @@ class Appointments extends CI_Controller {
         $this->load->model('providers_model');
         $this->load->model('services_model');
 
+        $provider_appointments = [];
+				$available_providers = $this->providers_model->get_available_providers();
+				foreach ($available_providers as $provider) {
+					$provider_appointments = array_merge($provider_appointments, $this->appointments_model->get_batch([
+            	'id_users_provider' => $provider['id'],
+        		]));
+				}
+
         // Get the service, provider's working plan and provider appointments.
         $working_plan = json_decode($this->providers_model->get_setting('working_plan', $provider_id), TRUE);
 
-        $provider_appointments = $this->appointments_model->get_batch([
-            'id_users_provider' => $provider_id,
-        ]);
 
         // Sometimes it might be necessary to not take into account some appointment records in order to display what
         // the providers' available time periods would be without them.
@@ -1020,6 +1025,51 @@ class Appointments extends CI_Controller {
         }
 
         return $provider_id;
+    }
+    
+    /**
+     * Search if all providers are available.
+     *
+     * This will return true if all providers have available time to ensure that the room is free.
+     *
+     * @param int $service_id The requested service ID.
+     * @param string $selected_date The date to be searched.
+     *
+     * @return int Returns true if the room is free return false if the room is already taken.
+     */
+    protected function _get_all_providers_available($service_id, $selected_date)
+    {
+        $this->load->model('providers_model');
+        $this->load->model('services_model');
+        $available_providers = $this->providers_model->get_available_providers();
+        $service = $this->services_model->get_row($service_id);
+				$all_provider_available = TRUE;
+
+        foreach ($available_providers as $provider)
+        {
+            foreach ($provider['services'] as $provider_service_id)
+            {
+                if ($provider_service_id == $service_id)
+                {
+                    // Check if the provider is available for the requested date.
+                    $empty_periods = $this->_get_provider_available_time_periods($provider['id'], $service_id,
+                        $selected_date);
+
+                    $available_hours = $this->_calculate_available_hours($empty_periods, $selected_date,
+                        $service['duration'], FALSE, $service['availabilities_type']);
+
+                    if ($service['attendants_number'] > 1)
+                    {
+                        $available_hours = $this->_get_multiple_attendants_hours($selected_date, $service,
+                            $provider);
+										}
+			
+										$all_provider_available = $all_provider_available && count($available_hours) > 0;
+                }
+            }
+        }
+
+        return $all_provider_available;
     }
 
     /**
