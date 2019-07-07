@@ -908,8 +908,12 @@ class Appointments extends CI_Controller {
             {
                 $appointment_start = new DateTime($provider_appointment['start_datetime']);
                 $appointment_end = new DateTime($provider_appointment['end_datetime']);
+                
                 $period_start = new DateTime($selected_date . ' ' . $period['start']);
                 $period_end = new DateTime($selected_date . ' ' . $period['end']);
+
+                $appointment_end->add(new DateInterval('PT' . 15 . 'M')); // add 15min time after an appointment to clean the room
+                $period_end->add(new DateInterval('PT' . 15 . 'M')); // add 15min time after an appointment to clean the room
 
                 if ($appointment_start <= $period_start && $appointment_end <= $period_end && $appointment_end <= $period_start)
                 {
@@ -1127,18 +1131,20 @@ class Appointments extends CI_Controller {
     ) {
         $this->load->model('settings_model');
 
+        $actualServiceDuration = $service_duration + 15; // add 15min to have enough time to clean the roome
+
         $available_hours = [];
 
         foreach ($empty_periods as $period)
         {
             $start_hour = new DateTime($selected_date . ' ' . $period['start']);
             $end_hour = new DateTime($selected_date . ' ' . $period['end']);
-            $interval = $availabilities_type === AVAILABILITIES_TYPE_FIXED ? (int)$service_duration : 15;
+            $interval = $availabilities_type === AVAILABILITIES_TYPE_FIXED ? (int)$actualServiceDuration : 15;
 
             $current_hour = $start_hour;
             $diff = $current_hour->diff($end_hour);
 
-            while (($diff->h * 60 + $diff->i) >= intval($service_duration))
+            while (($diff->h * 60 + $diff->i) >= intval($actualServiceDuration))
             {
                 $available_hours[] = $current_hour->format('H:i');
                 $current_hour->add(new DateInterval('PT' . $interval . 'M'));
