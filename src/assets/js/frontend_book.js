@@ -70,7 +70,7 @@ window.FrontendBook = window.FrontendBook || {};
                         text: '#666666'
                     },
                     button: {
-                        background: '#3DD481',
+                        background: '#0088cc',
                         text: '#ffffff'
                     }
                 },

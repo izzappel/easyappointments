@@ -1134,7 +1134,8 @@ class Appointments extends CI_Controller {
     ) {
         $this->load->model('settings_model');
 
-        $actualServiceDuration = $service_duration + CLEANING_TIME_IN_MINUTES; // add 30min to have enough time to clean the room
+        // min 45min service time slots
+        $actualServiceDuration = max(45, $service_duration) + CLEANING_TIME_IN_MINUTES; // add 30min to have enough time to clean the room
 
         $available_hours = [];
 
