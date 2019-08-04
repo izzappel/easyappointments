@@ -87,5 +87,7 @@ define('CALENDAR_VIEW_TABLE', 'table');
 define('AVAILABILITIES_TYPE_FLEXIBLE', 'flexible');
 define('AVAILABILITIES_TYPE_FIXED', 'fixed');
 
+define('CLEANING_TIME_IN_MINUTES', 30);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

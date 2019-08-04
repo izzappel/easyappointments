@@ -213,23 +213,21 @@ window.FrontendBook = window.FrontendBook || {};
             var currServiceId = $('#select-service').val();
             $('#select-provider').empty();
 
-            $.each(GlobalVariables.availableProviders, function (indexProvider, provider) {
-                $.each(provider.services, function (indexService, serviceId) {
-                    // If the current provider is able to provide the selected service,
-                    // add him to the listbox.
-                    if (serviceId == currServiceId) {
-                        var optionHtml = '<option value="' + provider.id + '">'
-                            + provider.first_name + ' ' + provider.last_name
-                            + '</option>';
-                        $('#select-provider').append(optionHtml);
-                    }
-                });
-            });
+            // If the current provider is able to provide the selected service,
+            // add him to the listbox.
+            var availableProviders = GlobalVariables.availableProviders.filter(p => p.services.indexOf(currServiceId) !== -1);
 
             // Add the "Any Provider" entry.
-            if ($('#select-provider option').length >= 1) {
-                $('#select-provider').append(new Option('- ' + EALang.any_provider + ' -', 'any-provider'));
+            if (availableProviders.length >= 1) {
+              $('#select-provider').append(new Option('- ' + EALang.any_provider + ' -', 'any-provider'));
             }
+
+            $.each(availableProviders, function (indexProvider, provider) {
+                var optionHtml = '<option value="' + provider.id + '">'
+                    + provider.first_name + ' ' + provider.last_name
+                    + '</option>';
+                $('#select-provider').append(optionHtml);
+            });
 
             FrontendBookApi.getUnavailableDates($('#select-provider').val(), $(this).val(),
                 $('#select-date').datepicker('getDate').toString('yyyy-MM-dd'));

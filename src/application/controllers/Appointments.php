@@ -421,9 +421,11 @@ class Appointments extends CI_Controller {
             sort($available_hours, SORT_STRING);
             $available_hours = array_values($available_hours);
 
+            $response['emptyPeriods'] = $empty_periods;
+            $response['availableHours'] = $available_hours;
             $this->output
                 ->set_content_type('application/json')
-                ->set_output(json_encode($available_hours));
+                ->set_output(json_encode($response));
         }
         catch (Exception $exc)
         {
@@ -832,13 +834,14 @@ class Appointments extends CI_Controller {
 
         if (isset($selected_date_working_plan['breaks']))
         {
-            $periods[] = [
-                'start' => $selected_date_working_plan['start'],
-                'end' => $selected_date_working_plan['end']
-            ];
-
             $day_start = new DateTime($selected_date_working_plan['start']);
             $day_end = new DateTime($selected_date_working_plan['end']);
+            $day_end = $day_end->add(new DateInterval('PT' . CLEANING_TIME_IN_MINUTES . 'M')); // add 30min time add the end to not take into account the cleaning time at the end of the day
+
+            $periods[] = [
+              'start' => $day_start->format('H:i'),
+              'end' => $day_end->format('H:i')
+            ];
 
             // Split the working plan to available time periods that do not contain the breaks in them.
             foreach ($selected_date_working_plan['breaks'] as $index => $break)
@@ -912,8 +915,8 @@ class Appointments extends CI_Controller {
                 $period_start = new DateTime($selected_date . ' ' . $period['start']);
                 $period_end = new DateTime($selected_date . ' ' . $period['end']);
 
-                $appointment_end->add(new DateInterval('PT' . 15 . 'M')); // add 15min time after an appointment to clean the room
-                $period_end->add(new DateInterval('PT' . 15 . 'M')); // add 15min time after an appointment to clean the room
+                $appointment_end->add(new DateInterval('PT' . CLEANING_TIME_IN_MINUTES . 'M')); // add 30min time after an appointment to clean the room
+                $period_end->add(new DateInterval('PT' . CLEANING_TIME_IN_MINUTES . 'M')); // add 30min time after an appointment to clean the room
 
                 if ($appointment_start <= $period_start && $appointment_end <= $period_end && $appointment_end <= $period_start)
                 {
@@ -1131,7 +1134,7 @@ class Appointments extends CI_Controller {
     ) {
         $this->load->model('settings_model');
 
-        $actualServiceDuration = $service_duration + 15; // add 15min to have enough time to clean the roome
+        $actualServiceDuration = $service_duration + CLEANING_TIME_IN_MINUTES; // add 30min to have enough time to clean the room
 
         $available_hours = [];
 
