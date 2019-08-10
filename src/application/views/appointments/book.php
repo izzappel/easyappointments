@@ -177,11 +177,11 @@
                         <h3 class="frame-title"><?= lang('step_two_title') ?></h3>
 
                         <div class="frame-content row">
-                            <div class="col-xs-12 col-sm-6">
+                            <div class="col-xs-12 col-sm-12">
                                 <div id="select-date"></div>
                             </div>
 
-                            <div class="col-xs-12 col-sm-6">
+                            <div class="col-xs-12 col-sm-12" style="margin-top: 20px;">
                                 <div id="available-hours"></div>
                             </div>
                         </div>

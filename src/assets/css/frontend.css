@@ -66,11 +66,11 @@ body {
 
 #book-appointment-wizard .wizard-frame {
     padding: 10px 20px;
-    height: 560px;
+    height: 760px;
 }
 
 #book-appointment-wizard .wizard-frame .frame-container {
-    height: 440px;
+    height: 670px;
     margin-bottom: 10px;
 }
 
