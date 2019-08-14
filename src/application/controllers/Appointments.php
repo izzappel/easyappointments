@@ -435,7 +435,88 @@ class Appointments extends CI_Controller {
                     'exceptions' => [exceptionToJavaScript($exc)]
                 ]));
         }
-    }
+		}
+		
+		public function ajax_debug() {
+			try
+			{
+				$post_data = $this->input->post('post_data'); // alias
+
+				$this->load->model('appointments_model');
+				$this->load->model('providers_model');
+				$this->load->model('services_model');
+				$this->load->model('customers_model');
+				$this->load->model('settings_model');
+
+				$appointment = $_POST['post_data']['appointment'];
+
+
+        $service_duration = $this->services_model->get_value('duration', $appointment['id_services']);
+				$selected_date = date('Y-m-d', strtotime($appointment['start_datetime']));
+				$available_periods = $this->_get_provider_available_time_periods(
+					$appointment['id_users_provider'], $appointment['id_services'],
+					$selected_date,
+					[]);
+
+
+				$working_plan = json_decode($this->providers_model->get_setting('working_plan', $appointment['id_users_provider']), TRUE);
+
+				$selected_date_working_plan = $working_plan[strtolower(date('l', strtotime($selected_date)))];
+				
+				$day_end = new DateTime($selected_date_working_plan['end']);
+				$day_end = $day_end->add(new DateInterval('PT' . CLEANING_TIME_IN_MINUTES . 'M'));
+
+
+				$is_still_available = FALSE;
+				$appt_start = new DateTime($appointment['start_datetime']);
+				$appt_start = $appt_start->format('H:i');
+
+				$appt_end = new DateTime($appointment['start_datetime']);
+				$appt_end->add(new DateInterval('PT' . $service_duration . 'M'));
+				$appt_end = $appt_end->format('H:i');
+
+				$result = [
+					'available_periods' => $available_periods,
+					'appt_start' => $appt_start,
+					'appt_end' => $appt_end,
+					'working_plan' => $working_plan,
+					'selected_date_working_plan' => $selected_date_working_plan,
+					'breaks' => isset($selected_date_working_plan['breaks']),
+					'day_end' => $day_end->format('H:i'),
+				];
+				foreach ($available_periods as $period)
+				{
+
+						$period_start = date('H:i', strtotime($period['start']));
+						$period_end = date('H:i', strtotime($period['end']));
+						if ($period_end == '00:00') {
+							$period_end = '24:00';
+						}
+
+						$result[$period['start']] = $period_start;
+						$result[$period['end']] = $period_end;
+						if ($period_start <= $appt_start && $period_end >= $appt_end)
+						{
+								$is_still_available = TRUE;
+								break;
+						}
+				}
+
+				$result['is_still_available'] = $is_still_available;
+				
+				$this->output
+						->set_content_type('application/json')
+						->set_output(json_encode($result));
+			}
+			catch (Exception $exc)
+			{
+				$this->output
+						->set_content_type('application/json')
+						->set_output(json_encode([
+								'exceptions' => [exceptionToJavaScript($exc)]
+						]));
+			}
+		}
 
     /**
      * [AJAX] Register the appointment to the database.
@@ -812,7 +893,6 @@ class Appointments extends CI_Controller {
         // Get the service, provider's working plan and provider appointments.
         $working_plan = json_decode($this->providers_model->get_setting('working_plan', $provider_id), TRUE);
 
-
         // Sometimes it might be necessary to not take into account some appointment records in order to display what
         // the providers' available time periods would be without them.
         foreach ($excluded_appointment_ids as $excluded_appointment_id)
@@ -916,7 +996,6 @@ class Appointments extends CI_Controller {
                 $period_end = new DateTime($selected_date . ' ' . $period['end']);
 
                 $appointment_end->add(new DateInterval('PT' . CLEANING_TIME_IN_MINUTES . 'M')); // add 30min time after an appointment to clean the room
-                $period_end->add(new DateInterval('PT' . CLEANING_TIME_IN_MINUTES . 'M')); // add 30min time after an appointment to clean the room
 
                 if ($appointment_start <= $period_start && $appointment_end <= $period_end && $appointment_end <= $period_start)
                 {
