@@ -189,26 +189,37 @@ class Backend_api extends CI_Controller {
             $this->load->model('services_model');
             $this->load->model('customers_model');
 
+            // Get appointments
+            $record_id = $this->db->escape($_POST['record_id']);
+            $start_date = $this->db->escape($_POST['start_date']);
+						$end_date = $this->db->escape(date('Y-m-d', strtotime($_POST['end_date'] . ' +1 day')));
+
             if ($this->input->post('filter_type') == FILTER_TYPE_PROVIDER)
             {
-                $where_id = 'id_users_provider';
+								$where_id = 'id_users_provider';
+								if ($_POST['record_id'] != ANY_PROVIDER) {
+									$id_where_clause = $where_id . ' = ' . $record_id;
+								} else {
+									$id_where_clause = NULL;
+								}
             }
             else
             {
                 $where_id = 'id_services';
+								$id_where_clause = $where_id . ' = ' . $record_id;
             }
 
-            // Get appointments
-            $record_id = $this->db->escape($_POST['record_id']);
-            $start_date = $this->db->escape($_POST['start_date']);
-            $end_date = $this->db->escape(date('Y-m-d', strtotime($_POST['end_date'] . ' +1 day')));
-
-            $where_clause = $where_id . ' = ' . $record_id . '
-                AND ((start_datetime > ' . $start_date . ' AND start_datetime < ' . $end_date . ') 
+            $date_where_clause = '((start_datetime > ' . $start_date . ' AND start_datetime < ' . $end_date . ') 
                 or (end_datetime > ' . $start_date . ' AND end_datetime < ' . $end_date . ') 
                 or (start_datetime <= ' . $start_date . ' AND end_datetime >= ' . $end_date . ')) 
                 AND is_unavailable = 0
-            ';
+						';
+						
+						if ($id_where_clause == NULL) {
+							$where_clause = $date_where_clause;
+						} else {
+							$where_clause = $id_where_clause . ' AND ' . $date_where_clause;
+						}
 
             $response['appointments'] = $this->appointments_model->get_batch($where_clause);
 

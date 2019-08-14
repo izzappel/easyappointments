@@ -212,7 +212,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
          */
         $('#select-filter-item').change(function () {
             // If current value is service, then the sync buttons must be disabled.
-            if ($('#select-filter-item option:selected').attr('type') === FILTER_TYPE_SERVICE) {
+						if ($('#select-filter-item option:selected').attr('type') === FILTER_TYPE_SERVICE
+							|| $('#select-filter-item').val() === 'any-provider') {
                 $('#google-sync, #enable-sync, #insert-appointment, #insert-unavailable').prop('disabled', true);
                 $('#calendar').fullCalendar('option', 'selectable', false);
                 $('#calendar').fullCalendar('option', 'editable', false);
@@ -1195,7 +1196,14 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     + 'google-sync="' + hasGoogleSync + '">'
                     + provider.first_name + ' ' + provider.last_name
                     + '</option>';
-            });
+						});
+
+						// add "any provider" option
+						optgroupHtml +=
+							'<option value="any-provider" type="' + FILTER_TYPE_PROVIDER + '" '
+							+ 'google-sync="false">'
+							+ EALang.any_provider
+							+ '</option>';
 
             optgroupHtml += '</optgroup>';
 
