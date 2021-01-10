@@ -882,13 +882,20 @@ class Appointments extends CI_Controller {
         $this->load->model('providers_model');
         $this->load->model('services_model');
 
-        $provider_appointments = [];
-				$available_providers = $this->providers_model->get_available_providers();
-				foreach ($available_providers as $provider) {
-					$provider_appointments = array_merge($provider_appointments, $this->appointments_model->get_batch([
-            	'id_users_provider' => $provider['id'],
-        		]));
-				}
+
+        $provider_appointments = $this->appointments_model->get_batch([	
+			    'id_users_provider' => $provider_id,	
+			  ]);
+
+			  $available_providers = $this->providers_model->get_available_providers();
+			  foreach ($available_providers as $provider) {
+				  if ($provider_id != $provider['id']) {
+				    $provider_appointments = array_merge($provider_appointments, $this->appointments_model->get_batch([
+				      'is_unavailable' => FALSE,
+              'id_users_provider' => $provider['id'],
+					  ]));
+					}
+			  }
 
         // Get the service, provider's working plan and provider appointments.
         $working_plan = json_decode($this->providers_model->get_setting('working_plan', $provider_id), TRUE);
